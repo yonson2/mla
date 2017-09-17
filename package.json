@@ -22,5 +22,9 @@
     "eslint-config-prettier": "^2.5.0",
     "eslint-plugin-prettier": "^2.2.0",
     "prettier": "^1.7.0"
+  },
+  "dependencies": {
+    "gfycat-style-urls": "^1.0.1",
+    "scrypt-async": "^1.3.1"
   }
 }
