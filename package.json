@@ -1,0 +1,26 @@
+{
+  "name": "mla",
+  "version": "0.0.1",
+  "description": "Magic League Administrator - Easily run and manage a Magic: The Gathering monthly league",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yonson2/mla.git"
+  },
+  "author": "Peter S. <s@pramos.me>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/yonson2/mla/issues"
+  },
+  "homepage": "https://github.com/yonson2/mla#readme",
+  "devDependencies": {
+    "ava": "^0.22.0",
+    "eslint": "^4.7.0",
+    "eslint-config-prettier": "^2.5.0",
+    "eslint-plugin-prettier": "^2.2.0",
+    "prettier": "^1.7.0"
+  }
+}
