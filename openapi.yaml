@@ -235,9 +235,6 @@ components:
     League:
       description: Information about a League
       properties:
-        set:
-          description: The MTG set name of the league
-          type: string
         created_at:
           description: When the league was created
           type: string
