@@ -1,6 +1,5 @@
 const Router = require("koa-router");
 const koaBody = require("koa-body")();
-const jwt = require("jsonwebtoken");
 
 const login = require("./login");
 
