@@ -1,12 +1,262 @@
 openapi: "3.0.0"
 info:
+  description: "This is a Magic: The Gathering League Administrator (MLA) server. You can find out more about MLA at [https://github.com/yonson2/mla](https://github.com/yonson2/mla)"
   version: 1.0.0
   title: MLA API
+  contact:
+    email: "s@pramos.me"
   license:
     name: GPL-3.0
     url: https://raw.githubusercontent.com/yonson2/mla/master/LICENSE
 servers:
   - url: http://localhost:3456/v1
 paths:
+  /login:
+    post:
+      summary: Sends JWT token to use in paths with restricted access
+      operationId: login
+      tags:
+        - login
+      parameters:
+        - name: league
+          in: header
+          description: The user''s league name
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: header
+          required: true
+          description: The user''s password
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JWT token
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Invalid user/password combination
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /create:
+    post:
+      summary: Creates a new league
+      operationId: createLeague
+      tags:
+        - create
+        - league
+      parameters:
+        - name: password
+          in: header
+          description: The administrator password
+          required: true
+          schema:
+            type: string
+            format: password
+        - name: email
+          in: header
+          description: Administrator email, used for issuing a new password
+          required: false
+          schema:
+            type: string
+        - name: users
+          in: header
+          description: Serialized JSON list of users
+          required: true
+          schema:
+            $ref: "#components/schemas/Users"
+      responses:
+        '200':
+          description: League information
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/League"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /league/{leagueName}:
+    get:
+      summary: Info for a specific league
+      operationId: getLeague
+      tags:
+        - league
+      parameters:
+        - name: leagueName
+          in: path
+          description: The league''s name
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: League information
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/League"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /league/{leagueName}/{dci}:
+    get:
+      summary: Info for a specific user
+      operationId: getUser
+      tags:
+        - league
+        - user
+      parameters:
+        - name: leagueName
+          in: path
+          description: The league''s name
+          required: true
+          schema:
+            type: string
+        - name: dci
+          in: path
+          description: The user''s dci
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Updates an user
+      operationId: updateUser
+      tags:
+        - user
+        - league
+      parameters:
+        - name: user
+          in: header
+          description: Serialized JSON of User object
+          required: true
+          schema:
+            $ref: "#components/schemas/User"
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
+    User:
+      description: A representation of an user
+      required:
+        - dci
+        - name
+      properties:
+        dci:
+          type: integer
+          format: int32
+        name:
+          type: string
+        stats:
+          type: object
+          properties:
+              points:
+                type: integer
+                format: int32
+                description: Number of points the user currently has
+              ranking:
+                type: integer
+                format: int32
+                minimum: 1
+                description: The user''s overall ranking.
+              played_matches:
+                type: object
+                description: Detailed info about the user''s wins and losses
+                properties:
+                  wins:
+                    description: List of defeated users in a match, identified by DCI number
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                  losses:
+                    description: List of users that have defeated the user in a match, identified by DCI number
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                  ties:
+                    description: List of tied matches, identified by DCI number
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    League:
+      description: Information about a League
+      properties:
+        set:
+          description: The MTG set name of the league
+          type: string
+        created_at:
+          description: When the league was created
+          type: string
+          format: date
+        name:
+          description: The randomly generated name for the league
+          type: string
+        users:
+          description: List of users participating in the league
+          type: array
+          items:
+            $ref: "#components/schemas/User"
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
