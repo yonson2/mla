@@ -1,10 +1,10 @@
 const { generateCombination } = require("gfycat-style-urls");
 
-function generate(locale) {
+function generate(locale = "EN") {
   // different order and rules for different languages.
   if (locale === "ES") return generateES();
   //default to english
-  return generateCombination(2, "");
+  return generateCombination(2, "").replace(/ /g, "-");
 }
 
 function generateES() {
