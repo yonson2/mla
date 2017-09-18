@@ -1,0 +1,12 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: MLA API
+  license:
+    name: GPL-3.0
+    url: https://raw.githubusercontent.com/yonson2/mla/master/LICENSE
+servers:
+  - url: http://localhost:3456/v1
+paths:
+components:
+  schemas:
