@@ -6,6 +6,10 @@ const envPath = path.join(__dirname, "../", "../", ".env");
 const buf = fs.readFileSync(envPath);
 const env = dotenv.parse(buf); // will return an object
 
-const config = {};
+const config = {
+  app: {
+    port: 3456
+  }
+};
 
 module.exports = Object.assign({}, config, env);
