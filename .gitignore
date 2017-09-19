@@ -17,3 +17,6 @@ node_modules/
 
 #SQLite database
 src/config/db.sqlite
+
+#Notes file
+notes

@@ -6,7 +6,7 @@ function hash(password) {
   return new Promise((resolve, reject) => {
     scrypt(
       password,
-      config.SCRYPTSALT,
+      process.env.SCRYPTSALT,
       {
         N: 16384 * 2,
         r: 16,

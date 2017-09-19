@@ -7,6 +7,7 @@ CREATE TABLE Leagues (
   name TEXT UNIQUE NOT NULL,
   created_at INTEGER NOT NULL,
   password TEXT NOT NULL,
+  user_password TEXT NOT NULL,
   email TEXT
 );
 

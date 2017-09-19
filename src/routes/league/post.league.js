@@ -1,4 +1,6 @@
-const uriGenerator = require("../utils/uri-generator");
+const leagueService = require("./league.service");
+const numbers = require("../../utils/numbers");
+const config = require("../../config");
 
 function maybeThrowBadPassword(str = "") {
   if (str.length < 6) {
@@ -25,7 +27,7 @@ function isGoodLeagueInfo(payload) {
   return true;
 }
 
-function parseRawLeague(payload) {
+async function parseRawLeague(payload) {
   const users = JSON.parse(payload.users).users.map(user => ({
     name: user.name,
     dci: user.dci,
@@ -39,21 +41,33 @@ function parseRawLeague(payload) {
       }
     }
   }));
-  const result = {
-    name: uriGenerator(),
+  const leagueInfo = {
+    name: await leagueService.generateUniqueName(),
+    email: `${payload.email ? payload.email : null}`,
+    password: `${payload.password}`,
+    user_password: numbers.generateRandomDigits(config.user.passwordStrength),
     created_at: Math.round(new Date().getTime() / 1000), // Unix Timestamp
     users
   };
-  // TODO: INSERT INTO DATABASE
-  return result;
+  return leagueInfo;
 }
 
-module.exports = ctx => {
+module.exports = async ctx => {
   // ctx.request.body
   try {
+    // Check if data is good
     isGoodLeagueInfo(ctx.request.body);
-    ctx.body = parseRawLeague(ctx.request.body);
+    const leagueData = await parseRawLeague(ctx.request.body);
+
+    // Insert into database
+    await leagueService.create(leagueData);
+    delete leagueData.password;
+
+    // Return data
+    ctx.body = leagueData;
   } catch (err) {
+    console.error(JSON.stringify(err, null, " "));
+    console.error(err.message);
     ctx.status = 400;
     ctx.body = err.message;
   }

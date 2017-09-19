@@ -1,15 +1,10 @@
-const dotenv = require("dotenv");
-const path = require("path");
-const fs = require("fs");
-
-const envPath = path.join(__dirname, "../", "../", ".env");
-const buf = fs.readFileSync(envPath);
-const env = dotenv.parse(buf); // will return an object
-
 const config = {
   app: {
     port: 3456
+  },
+  user: {
+    passwordStrength: 4
   }
 };
 
-module.exports = Object.assign({}, config, env);
+module.exports = config;

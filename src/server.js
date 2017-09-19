@@ -1,9 +1,10 @@
-const db = require("sqlite");
+require("dotenv").config();
+
 const Koa = require("koa");
 const koajwt = require("koa-jwt");
 const mount = require("koa-mount");
 
-const router = require("./router");
+const router = require("./routes/router");
 const config = require("./config");
 
 const v1 = new Koa();
@@ -11,10 +12,11 @@ const v1 = new Koa();
 require("./config/db");
 
 // JWT
-// Using passthrough because most of the endpoints don't need auth
-// check ctx.state.user to see if the request is authenticated
-// could also use .unless({ path: [/^\/public/] }) instead
-v1.use(koajwt({ secret: config.JWTSALT, passthrough: true }));
+v1.use(
+  koajwt({ secret: process.env.JWTSALT }).unless({
+    path: [/^\/v1\/login/, /^\/v1\/league\/?$/]
+  })
+);
 
 // Load routes
 v1.use(router.routes());
@@ -29,12 +31,3 @@ app.use(mount("/v1", v1));
 app.listen(config.app.port);
 
 module.exports = app;
-
-// Catch SIGNIT and perform cleanup
-process.on("SIGINT", function() {
-  console.log("\nClosing database");
-  db
-    .close()
-    .then(() => console.log("Database closed"))
-    .then(() => process.exit());
-});

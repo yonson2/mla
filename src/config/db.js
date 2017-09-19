@@ -16,4 +16,13 @@ function connectDB() {
   );
 }
 
+// Catch SIGNIT and perform cleanup
+process.on("SIGINT", function() {
+  console.log("\nClosing database");
+  db
+    .close()
+    .then(() => console.log("Database closed"))
+    .then(() => process.exit());
+});
+
 connectDB();
