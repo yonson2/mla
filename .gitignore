@@ -16,7 +16,7 @@ node_modules/
 .env
 
 #SQLite database
-src/config/db.sqlite
+dev.sqlite3
 
 #Notes file
 notes

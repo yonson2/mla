@@ -1,6 +1,7 @@
 const leagueService = require("./league.service");
 const numbers = require("../../utils/numbers");
 const config = require("../../config");
+const hash = require("../../utils/hasher");
 
 function maybeThrowBadPassword(str = "") {
   if (str.length < 6) {
@@ -28,7 +29,7 @@ function isGoodLeagueInfo(payload) {
 }
 
 async function parseRawLeague(payload) {
-  const users = JSON.parse(payload.users).users.map(user => ({
+  const usersInfo = JSON.parse(payload.users).users.map(user => ({
     name: user.name,
     dci: user.dci,
     stats: {
@@ -44,11 +45,12 @@ async function parseRawLeague(payload) {
   const leagueInfo = {
     name: await leagueService.generateUniqueName(),
     email: `${payload.email ? payload.email : null}`,
-    password: `${payload.password}`,
+    password: await hash(payload.password),
     user_password: numbers.generateRandomDigits(config.user.passwordStrength),
     created_at: Math.round(new Date().getTime() / 1000), // Unix Timestamp
-    users
+    users: usersInfo
   };
+  console.log(leagueInfo.password);
   return leagueInfo;
 }
 

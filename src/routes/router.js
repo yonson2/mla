@@ -1,7 +1,7 @@
 const Router = require("koa-router");
 const koaBody = require("koa-body")();
 
-const login = require("./login");
+const login = require("./login/post.login");
 const createLeague = require("./league/post.league");
 
 const router = new Router();

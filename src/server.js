@@ -1,15 +1,17 @@
-require("dotenv").config();
+require("./config/startup");
 
 const Koa = require("koa");
 const koajwt = require("koa-jwt");
 const mount = require("koa-mount");
+const logger = require("koa-logger");
 
 const router = require("./routes/router");
 const config = require("./config");
 
 const v1 = new Koa();
 
-require("./config/db");
+// Log requests
+v1.use(logger());
 
 // JWT
 v1.use(
